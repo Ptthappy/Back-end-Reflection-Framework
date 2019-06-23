@@ -1,0 +1,114 @@
+CREATE SEQUENCE public.object_object_id_seq;
+
+CREATE TABLE public.object (
+                object_id INTEGER NOT NULL DEFAULT nextval('public.object_object_id_seq'),
+                object_description VARCHAR(100) NOT NULL,
+                CONSTRAINT object_id PRIMARY KEY (object_id)
+);
+
+
+ALTER SEQUENCE public.object_object_id_seq OWNED BY public.object.object_id;
+
+CREATE SEQUENCE public.method_method_id_seq;
+
+CREATE TABLE public.method (
+                method_id INTEGER NOT NULL DEFAULT nextval('public.method_method_id_seq'),
+                object_id INTEGER NOT NULL,
+                method_description VARCHAR(100) NOT NULL,
+                CONSTRAINT method_id PRIMARY KEY (method_id, object_id)
+);
+
+
+ALTER SEQUENCE public.method_method_id_seq OWNED BY public.method.method_id;
+
+CREATE SEQUENCE public.profile_perfil_id_seq;
+
+CREATE TABLE public.profile (
+                perfil_id INTEGER NOT NULL DEFAULT nextval('public.profile_perfil_id_seq'),
+                profile_description VARCHAR(200) NOT NULL,
+                CONSTRAINT profile_id PRIMARY KEY (perfil_id)
+);
+
+
+ALTER SEQUENCE public.profile_perfil_id_seq OWNED BY public.profile.perfil_id;
+
+CREATE TABLE public.permission_method (
+                perfil_id INTEGER NOT NULL,
+                method_id INTEGER NOT NULL,
+                CONSTRAINT profile_id__method_id PRIMARY KEY (perfil_id, method_id)
+);
+
+
+CREATE TABLE public.permission_object (
+                perfil_id INTEGER NOT NULL,
+                object_id INTEGER NOT NULL,
+                CONSTRAINT profile_id__object_id PRIMARY KEY (perfil_id, object_id)
+);
+
+
+CREATE SEQUENCE public.users_user_id_seq;
+
+CREATE TABLE public.users (
+                user_id INTEGER NOT NULL DEFAULT nextval('public.users_user_id_seq'),
+                user_name VARCHAR(100) NOT NULL,
+                CONSTRAINT user_id PRIMARY KEY (user_id)
+);
+
+
+ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
+
+CREATE TABLE public.users_profile (
+                user_id INTEGER NOT NULL,
+                perfil_id INTEGER NOT NULL,
+                CONSTRAINT user_id__profile_id PRIMARY KEY (user_id, perfil_id)
+);
+
+
+ALTER TABLE public.permission_object ADD CONSTRAINT object_permission_object_fk
+FOREIGN KEY (object_id)
+REFERENCES public.object (object_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.method ADD CONSTRAINT object_method_fk
+FOREIGN KEY (object_id)
+REFERENCES public.object (object_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.permission_method ADD CONSTRAINT method_permission_method_fk
+FOREIGN KEY (method_id)
+REFERENCES public.method (method_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.users_profile ADD CONSTRAINT profile_users_profile_fk
+FOREIGN KEY (perfil_id)
+REFERENCES public.profile (perfil_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.permission_object ADD CONSTRAINT profile_permission_object_fk
+FOREIGN KEY (perfil_id)
+REFERENCES public.profile (perfil_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.permission_method ADD CONSTRAINT profile_permission_method_fk
+FOREIGN KEY (perfil_id)
+REFERENCES public.profile (perfil_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.users_profile ADD CONSTRAINT users_users_profile_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
